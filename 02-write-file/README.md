@@ -48,7 +48,7 @@
     - [Сигнальные события (nodejsdev.ru)](https://nodejsdev.ru/api/process/#signal-events)
 - Readline:
     - [Readline](https://nodejs.org/api/readline.html)
-    - [Readline на русском (nodejsdev.ru)](https://nodejsdev.ru/api/readline/)
+    - [Readline на русском (nodejsdev.ru)]()
 - События:  
     - [События от Metanit](https://metanit.com/web/nodejs/2.9.php)
     - [Understanding Node.js Event-Driven Architecture (FreeCodeCamp)](https://www.freecodecamp.org/news/understanding-node-js-event-driven-architecture-223292fcbc2d/)
