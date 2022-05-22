@@ -1,14 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-/*console.log(path.join(__dirname,'README.md'))
-fs.stat(path.join(__dirname,'README.md'), (error, stats)=> {
-  if (error) console.log('Bad file');
-  else {
-    console.log(stats.size);
-  }
-})
-*/
 const { stdout } = process;
 const commonDirectory = path.join(__dirname,'secret-folder');
 fs.readdir(commonDirectory, (error, files) => {
