@@ -1,8 +1,9 @@
 const fs = require('fs');
+const fsPromises = require('fs/promises');
 const path = require('path');
 
 const destination = path.join(__dirname, 'project-dist');
-const destinationCss = path.join(__dirname, 'project-dist', 'style.css');
+const destinationCSS = path.join(__dirname, 'project-dist', 'style.css');
 const destinationAssets = path.join(__dirname, 'project-dist', 'assets');
 const assets = path.join(__dirname, 'assets');
 const components = path.join(__dirname, 'components');
@@ -10,32 +11,19 @@ const styles = path.join(__dirname, 'styles');
 
 fs.mkdir((destination), { recursive: true }, () => {});
 
-fs.readFile( path.join(__dirname, 'template.html'), 'utf-8', (error, data) => {
-  if (error) console.log('Error read template \n');
-  let templateText = data;
-
-  fs.readdir( components, { withFileTypes: true }, (error, files) => {
-    if (error) console.log('Error read components \n');
-    files.forEach(file => {
-
-      if (file.isFile() && path.extname(file.name) === '.html' ) {
-        fs.readFile(path.join(components, file.name), (error, dataComponent) => {
-          if (error) console.log('Error read component files');
-
-          const copiedText = dataComponent;
-          const name = path.basename(file.name, path.extname(file.name));
-
-          templateText = templateText.replaceAll(`{{${name}}}`, copiedText);
-  
-          fs.writeFile(path.join(destination, 'index.html'), templateText, error => {
-            if (error) console.log('Error wrire index.html');
-          });
-        });
-      } 
-    });
-  });
-  console.log('index.html added');
-});
+async function packHTML() {
+  let packHTML = await fsPromises.readFile(path.join(__dirname, 'template.html'), { encoding: 'utf-8' });
+  const files = await fsPromises.readdir(components);
+  for await (let file of files) {
+    if (path.extname(path.join(components, file)) === '.html') {
+      const name = path.basename(path.join(components, file), '.html');
+      const copiedText = await fsPromises.readFile(path.join(components, file), 'utf-8');
+      packHTML = packHTML.replaceAll(`{{${name}}}`, copiedText);
+    }
+  }
+  fsPromises.writeFile(path.join(destination, 'index.html'), packHTML);
+}
+packHTML();
 
 fs.readdir(styles, (error, files) => {
   if (error) {
@@ -48,13 +36,12 @@ fs.readdir(styles, (error, files) => {
         } else {
           if (stats.isFile && path.extname(file) === '.css') {
             const input = fs.createReadStream(path.join(styles, file), 'utf-8');
-            const output = fs.createWriteStream(path.join(destinationCss),  { flags: 'a'});
+            const output = fs.createWriteStream(path.join(destinationCSS),  { flags: 'a'});
             input.pipe(output);
           }
         }
       });
     });
-    console.log('Styles merged and copied');
   }
 });
   
@@ -79,11 +66,5 @@ fs.readdir(assets, (error, folders) => {
         });
       });
     });
-    console.log('Assets copied '); 
   }
 }); 
-
-
-
-
-
